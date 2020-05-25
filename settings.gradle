@@ -1,0 +1,2 @@
+rootProject.name='Share Data'
+include ':app'
