@@ -1,12 +1,12 @@
 package com.example.sharedata
 
 import android.os.Bundle
+import android.text.TextUtils
 import android.view.Menu
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.activity_main.*
-
 
 lateinit var adapter:MyRecyclerAdapter
 val str= mutableListOf<List<String>>()
@@ -51,7 +51,7 @@ class MainActivity : AppCompatActivity() {
         layoutManager.orientation = LinearLayoutManager.VERTICAL
 
         mainRecylerView.layoutManager = layoutManager
-        adapter = MyRecyclerAdapter(this, csvData, csvData)
+        adapter = MyRecyclerAdapter(this, csvData,csvData)
         mainRecylerView.adapter = adapter
 
 //      Setting Titles of the CSV file____________________________________

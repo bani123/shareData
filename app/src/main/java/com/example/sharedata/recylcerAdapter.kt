@@ -1,66 +1,69 @@
 package com.example.sharedata
 
 import android.content.Context
-import android.content.Intent
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
-import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.cardview.view.*
 import java.util.*
+import kotlin.collections.ArrayList
 
 class MyRecyclerAdapter(
     private val context: Context,
     private val csvData: MutableList<SData>,
-    private val csvDataFull:MutableList<SData>
-) : RecyclerView.Adapter<MyRecyclerAdapter.MyViewHolder>(),Filterable {
+    private var csvDataFilter:MutableList<SData>
+) : RecyclerView.Adapter<MyRecyclerAdapter.MyViewHolder>(), Filterable {
+    //var csvDataFilter = mutableListOf<SData>()
 
+//    init {
+//        csvDataFilter = csvData
+//    }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         val view = LayoutInflater.from(context).inflate(R.layout.cardview, parent, false)
         return MyViewHolder(view)
-
     }
 
+    override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
+        val csvD = csvDataFilter[position]
+        holder.setData(csvD)
+    }
     override fun getItemCount(): Int {
-        return csvData.size
+        return csvDataFilter.size
     }
 
     override fun getFilter(): Filter {
         return object : Filter() {
             override fun performFiltering(constraint: CharSequence?): FilterResults {
-                val filteredList = mutableListOf<SData>()
-
-                if (constraint.toString().isEmpty()) {
-                    filteredList.addAll(csvDataFull)
-                    println(csvDataFull)
+               // val charSearch=constraint.toString()
+                csvDataFilter = if (constraint.toString().isEmpty()) {
+                    csvData
                 } else {
-                    for (each in csvDataFull) {
+                    val resultList = mutableListOf<SData>()
+                    for (each in csvData) {
                         if (each.symbol.toLowerCase(Locale.ROOT).contains(
                                 constraint.toString().toLowerCase(Locale.ROOT)
                             )
                         ) {
-                            filteredList.add(each)
+                            resultList.add(each)
                         }
                     }
+                    resultList
                 }
                 val filterResults = FilterResults()
-                filterResults.values = filteredList
+                filterResults.values = csvDataFilter
                 return filterResults
             }
+
+            @Suppress("UNCHECKED_CAST")
             override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
-                csvData.clear()
-                csvData.addAll(results?.values as MutableList<SData>)
+                csvDataFilter=results?.values as MutableList<SData>
                 notifyDataSetChanged()
             }
         }
-    }
-
-    override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
-        val csvD = csvData[position]
-        holder.setData(csvD)
     }
 
     inner class MyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -73,4 +76,32 @@ class MyRecyclerAdapter(
             itemView.textView6.text = csvD.totalTrade.toString()
         }
     }
+
+//    override fun getFilter(): Filter {
+//        return object : Filter() {
+//            override fun performFiltering(constraint: CharSequence?): FilterResults {
+//                val charSearch = constraint.toString()
+//                if (charSearch.isEmpty()) {
+//                    csvDataFilter =csvData
+//                } else {
+//                    val resultList = ArrayList<SData>()
+//                    for (row in csvData) {
+//                        if (row.symbol.toLowerCase(Locale.ROOT).contains(charSearch.toLowerCase(Locale.ROOT))) {
+//                            resultList.add(row)
+//                        }
+//                    }
+//                    csvDataFilter = resultList
+//                }
+//                val filterResults = FilterResults()
+//                filterResults.values = csvDataFilter
+//                return filterResults
+//            }
+//
+//            @Suppress("UNCHECKED_CAST")
+//            override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
+//                csvDataFilter = results?.values as ArrayList<SData>
+//                notifyDataSetChanged()
+//            }
+//        }
+//    }
 }
